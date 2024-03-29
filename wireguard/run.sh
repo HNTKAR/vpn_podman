@@ -7,7 +7,6 @@ echoIB() {
 trap 'exit' SIGTERM
 
 ip link add dev wg0 type wireguard
-ip address add dev wg0 ${VPN_CIDR}
 
 echo Public key:
 echoIB $(cat /key/PublicKey)
