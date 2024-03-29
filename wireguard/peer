@@ -1,0 +1,26 @@
+#!/bin/bash
+
+declare -A OPTIONS
+
+OPTIONS["allow"]="192.168.0.0/16,172.16.0.0/12,10.0.0.0/8"
+
+while getopts ":i:p:a:" OPT;do
+    case $OPT in
+        i) OPTIONS["ip"]=$OPTARG;;
+        a) OPTIONS["allow"]=$OPTARG;;
+        p) OPTIONS["peer"]=$OPTARG;;
+        # f) OPTIONS["path"]=$OPTARG;;
+        *) echo "Command Error"
+        exit;;
+    esac
+done
+
+echo "${OPTIONS["allow"]}"
+
+wg set wg0 \
+    listen-port ${PORT} \
+    private-key /key/PrivateKey \
+    peer "${OPTIONS["peer"]}" \
+    preshared-key /key/PresharedKey \
+    allowed-ips "${OPTIONS["allow"]}" \
+    endpoint "${OPTIONS["ip"]}":${PORT}
