@@ -6,7 +6,8 @@ echoIB() {
 
 trap 'exit' SIGTERM
 
-ip link add dev wg0 type wireguard
+ip link add dev wg0 type wireguard 
+iptables -t nat -A POSTROUTING -o eth0 -s $VPN_CIDR -j MASQUERADE
 
 echo Public key:
 echoIB $(cat /key/PublicKey)
@@ -15,4 +16,3 @@ echoIB $(cat /key/PresharedKey)
 
 sleep inf &
 wait $!
-
