@@ -26,9 +26,6 @@ cd vpn_podman
 # Build Container
 sudo podman build --tag vpn --file wireguard/Dockerfile
 
-# Create volume
-sudo podman volume create VPN_
-
 # Creeate Pod
 sudo podman pod create --replace --publish 51820:51820/udp --volume VPN_:/usr/VPN --name VPN
 
