@@ -22,11 +22,15 @@
 ```bash
 cd vpn_podman
 
+
 # Build Container
 sudo podman build --tag vpn --file wireguard/Dockerfile
 
+# Create volume
+sudo podman volume create VPN_
+
 # Creeate Pod
-sudo podman pod create --replace --publish 51820:51820/udp --name VPN
+sudo podman pod create --replace --publish 51820:51820/udp --volume VPN_:/usr/VPN --name VPN
 
 # Start vpn-wireguard container
 sudo podman run --cap-drop all --cap-add CAP_NET_ADMIN --pod VPN --name vpn-wireguard --detach --replace vpn

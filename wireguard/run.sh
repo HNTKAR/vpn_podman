@@ -9,20 +9,32 @@ container_exit() {
 }
 
 trap "container_exit" SIGTERM
+mkdir -p /usr/$POD_NAME/$CONTAINER_NAME/{key,conf}
+chown $(id -u):$(id -u) -R /usr/$POD_NAME/$CONTAINER_NAME
+chmod 700 /usr/$POD_NAME/$CONTAINER_NAME
 
 NIC_NAME=$(ip addr|grep BROADCAST|cut -d ":" -f 2|sed s/\ //g)
 ip link add dev wg0 type wireguard
 ip address add dev wg0 $VPN_NET
-wg set wg0 listen-port $PORT private-key /key/private.key 
+
+if [ ! -f /usr/$POD_NAME/$CONTAINER_NAME/conf/wg0.conf ]; then
+    wg genkey | tee /usr/$POD_NAME/$CONTAINER_NAME/key/private.key | wg pubkey > /usr/$POD_NAME/$CONTAINER_NAME/key/public.key
+    wg set wg0 listen-port $PORT private-key /usr/$POD_NAME/$CONTAINER_NAME/key/private.key
+    wg showconf wg0 > /usr/$POD_NAME/$CONTAINER_NAME/conf/wg0.conf
+else
+    wg syncconf wg0 /usr/$POD_NAME/$CONTAINER_NAME/conf/wg0.conf
+fi
+
 ip link set down dev wg0
 ip link set up dev wg0
 
 echo "WireGuard interface wg0 created with IP $VPN_NET"
 echo "Listening on port $PORT"
-echo "wireguard private key is $(cat /key/private.key)"
+echo "wireguard public key: $(cat /usr/$POD_NAME/$CONTAINER_NAME/key/public.key)"
 
 iptables -t nat -A POSTROUTING -o $NIC_NAME -j MASQUERADE
 iptables -A FORWARD -i wg0 -j ACCEPT
 
 sleep infinity &
 wait $!
+container_exit
