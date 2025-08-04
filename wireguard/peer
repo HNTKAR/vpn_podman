@@ -1,32 +1,31 @@
 #!/bin/bash
 
-declare -A OPTIONS
+key=""
+allow="0.0.0.0/0"
 
-OPTIONS["allow"]="192.168.0.0/16,172.16.0.0/12,10.0.0.0/8"
 
-while getopts ":i:p:a:" OPT;do
+while getopts ":k:a" OPT;do
     case $OPT in
-        i) OPTIONS["ip"]=$OPTARG;;
-        a) OPTIONS["allow"]=$OPTARG;;
-        p) OPTIONS["peer"]=$OPTARG;;
-        # f) OPTIONS["path"]=$OPTARG;;
-        *) echo "Command Error"
+        a) allow="10.0.0.0/8,172.16.0.0/12,192.168.0.0/16";;
+        k) key=$OPTARG;;
+        *) echo "option Error: $OPT is not a valid option"
         exit;;
     esac
 done
 
+if [ -z "$key" ]; then
+    echo "Public key is required"
+    exit 1
+fi
+
+
 wg set wg0 \
-    listen-port ${PORT} \
-    private-key /key/PrivateKey \
-    peer "${OPTIONS["peer"]}" \
-    preshared-key /key/PresharedKey \
-    allowed-ips "${OPTIONS["allow"]}" 
+    peer $key \
+    allowed-ips $allow
+wg showconf wg0 > /usr/$POD_NAME/$CONTAINER_NAME/conf/wg0.conf
+wg syncconf wg0 /usr/$POD_NAME/$CONTAINER_NAME/conf/wg0.conf
 
-wg showconf wg0 > /etc/wireguard/wg0.conf
-wg-quick down wg0
+ip link set down dev wg0
+ip link set up dev wg0
 
-sed -i.old -e "1a Address=$VPN_CIDR" /etc/wireguard/wg0.conf
-wg-quick up wg0
-
-ip addr
 wg

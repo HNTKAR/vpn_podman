@@ -4,14 +4,16 @@
 ## 全体設定
 |名称|値|備考|
 |:-:|:-:|:-:|
-|ポッド名|vpn|ポッド作成時に設定|
+|イメージ名|vpn||
+|ポッド名|VPN||
+|コンテナ名|vpn-wireguard|
 
 ## wireguard container
 |名称|値|備考|
 |:-:|:-:|:-:|
-|localtime|Asia/Tokyo|ENV TZ|
-|VPN network|10.0.0.1/24|ENV VPN_CIDR|
-|VPN port|51820|ENV PORT|
+|localtime|Asia/Tokyo||
+|VPN network|10.0.0.1/24|VPN_NETを指定することで変更可能|
+|VPN port|51820|PORTを指定することで変更可能|
 
 # 実行スクリプト
 
@@ -20,32 +22,17 @@
 ```bash
 cd vpn_podman
 
-# タグの名称を設定
-TagName="main"
 
-# 利用するNIC名を設定
-NIC="eth0"
+# Build Container
+sudo podman build --tag vpn --file wireguard/Dockerfile
 
-# 利用するIPアドレスを指定
-NewIP="192.168.0.11"
+# Creeate Pod
+sudo podman pod create --replace --publish 51820:51820/udp --volume VPN_:/usr/VPN --name VPN
 
-# 所属ネットワークのサブネットアドレスを指定
-SubnetAddr="192.168.0.0/24"
-
-# ネットワークの作成
-sudo podman network create --driver ipvlan --opt parent=$NIC --subnet $SubnetAddr LocalLAN
-
-# ポッドの作成
-sudo podman pod create --replace --network LocalLAN --ip=$NewIP --name vpn
-
-# wireguard
-sudo podman build --tag vpn-wireguard:$TagName --file wireguard/Dockerfile
-sudo podman run --detach --replace --privileged --pod vpn --name vpn-wireguard vpn-wireguard:$TagName
-
-# ポートフォワーディングの設定
-sudo firewall-cmd --add-forward-port=port=$PORT:proto=udp:toport=$PORT:toaddr=$NewIP
-sudo firewall-cmd --add-forward-port=port=$PORT:proto=udp:toport=$PORT:toaddr=$NewIP --permanent
+# Start vpn-wireguard container
+sudo podman run --cap-drop all --cap-add CAP_NET_ADMIN --pod VPN --name vpn-wireguard --detach --replace vpn
 ```
+
 ## 通信対象となる端末の登録
 ```bash
 # 設定する公開鍵やIPは通信対象の端末(スマートフォンやノートPCなど)であり、サーバーのものではない
@@ -68,3 +55,4 @@ sed -e "s/.*\///g" tmp.service | \
 grep pod | \
 xargs -n 1 sudo systemctl disable --now
 ```
+
