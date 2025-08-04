@@ -13,7 +13,7 @@ mkdir -p /usr/$POD_NAME/$CONTAINER_NAME/{key,conf}
 chown $(id -u):$(id -u) -R /usr/$POD_NAME/$CONTAINER_NAME
 chmod 700 /usr/$POD_NAME/$CONTAINER_NAME
 
-NIC_NAME=$(ip addr|grep BROADCAST|cut -d ":" -f 2|sed s/\ //g)
+NIC_NAME=$(ip addr|grep BROADCAST|cut -d ":" -f 2|sed s/\ //g|sed s/\@.*//g|head -n 1)
 ip link add dev wg0 type wireguard
 ip address add dev wg0 $VPN_NET
 
