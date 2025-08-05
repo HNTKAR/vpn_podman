@@ -1,6 +1,8 @@
 [Pod]
-ServiceName=VPN
+ServiceName=pod-VPN
 PodName=VPN
 PublishPort=51820:51820/udp
-Volume=vpn:/usr/VPN
+Volume=VPN_:/usr/VPN
 
+[Install]
+WantedBy=multi-user.target default.target
