@@ -1,0 +1,6 @@
+[Container]
+ContainerName=vpn-wireguard
+Image=localhost/vpn
+Pod=VPN.pod
+DropCapability=all
+AddCapability=CAP_NET_ADMIN

@@ -1,0 +1,6 @@
+[Pod]
+ServiceName=VPN
+PodName=VPN
+PublishPort=51820:51820/udp
+Volume=vpn:/usr/VPN
+

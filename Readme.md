@@ -22,37 +22,41 @@
 ```bash
 cd vpn_podman
 
-
 # Build Container
 sudo podman build --tag vpn --file wireguard/Dockerfile
 
 # Creeate Pod
-sudo podman pod create --replace --publish 51820:51820/udp --volume VPN_:/usr/VPN --name VPN
+sudo podman pod create --replace --publish 51820:51820/udp --volume vpn-vol:/usr/VPN --name VPN
 
 # Start vpn-wireguard container
 sudo podman run --cap-drop all --cap-add CAP_NET_ADMIN --pod VPN --name vpn-wireguard --detach --replace vpn
 ```
 
 ## 通信対象となる端末の登録
+設定する公開鍵は通信対象の端末(スマートフォンやノートPCなど)であり、サーバーのものではない。  
+端末と証明書は常に1対1で関連付けられる。
 ```bash
-# 設定する公開鍵やIPは通信対象の端末(スマートフォンやノートPCなど)であり、サーバーのものではない
-sudo podman exec -it vpn-wireguard peer -p <通信対象の公開鍵> -a <通信対象の端末に割り当てたWireguard用のIPアドレス/32>
+# 端末の追加
+sudo podman exec -it vpn-wireguard peer add -k <key>
+
+# 端末の削除
+sudo podman exec -it vpn-wireguard peer rm -k <key>
+
+# 登録済み端末の取得
+sudo podman exec -it vpn-wireguard peer show
 ```
 
 ## 自動起動の設定
 ```sh
-sudo podman generate systemd -f -n --new --restart-policy=on-failure vpn >tmp.service
-cat tmp.service | \
-xargs -I {} sudo cp {} -frp /etc/systemd/system/
-sed -e "s/.*\///g" tmp.service | \
-grep pod | \
-xargs -n 1 sudo systemctl enable --now
+# コンテナはビルド済みであることが前提
+sudo cp Quadlet/* /usr/share/containers/systemd/
+sudo /usr/lib/systemd/system-generators/podman-system-generator
+sudo systemctl enable --now pod-VPN
 ```
 
 ## 自動起動解除
 ```sh
-sed -e "s/.*\///g" tmp.service | \
-grep pod | \
-xargs -n 1 sudo systemctl disable --now
+sudo systemctl disable --now pod-VPN
+sudo rm /etc/systemd/system/{pod-VPN,pod-VPN.service}
 ```
 
