@@ -3,27 +3,80 @@
 key=""
 allow="0.0.0.0/0"
 
+add_peer() {
+    while getopts ":k:ha" OPT;do
+        case $OPT in
+            a) allow="10.0.0.0/8,172.16.0.0/12,192.168.0.0/16";;
+            k) key=$OPTARG;;
+            h) echo "Usage: $0 -k <public_key> [-a] [-h]"
+               echo "  -k <public_key> : Public key of the peer to add"
+               echo "  -a               : Allow only local networks (default: all IPs)"
+               echo "  -h               : Show this help message"
+               exit 0;;
+            *) echo "option Error: $OPT is not a valid option"
+            exit;;
+        esac
+    done
 
-while getopts ":k:a" OPT;do
-    case $OPT in
-        a) allow="10.0.0.0/8,172.16.0.0/12,192.168.0.0/16";;
-        k) key=$OPTARG;;
-        *) echo "option Error: $OPT is not a valid option"
-        exit;;
-    esac
-done
+    if [ -z "$key" ]; then
+        echo "Public key is required"
+        exit 1
+    fi
 
-if [ -z "$key" ]; then
-    echo "Public key is required"
-    exit 1
-fi
+    wg set wg0 \
+        peer $key \
+        allowed-ips $allow
+    wg showconf wg0 > /usr/$POD_NAME/$CONTAINER_NAME/conf/wg0.conf
+    wg syncconf wg0 /usr/$POD_NAME/$CONTAINER_NAME/conf/wg0.conf
+}
 
+rm_peer() {
+    while getopts ":k:h" OPT;do
+        case $OPT in
+            k) key=$OPTARG;;
+            h) echo "Usage: $0 -k <public_key> [-h]"
+               echo "  -k <public_key> : Public key of the peer to remove"
+               echo "  -h               : Show this help message"
+               exit 0;;
+            *) echo "option Error: $OPT is not a valid option"
+            exit;;
+        esac
+    done
 
-wg set wg0 \
-    peer $key \
-    allowed-ips $allow
-wg showconf wg0 > /usr/$POD_NAME/$CONTAINER_NAME/conf/wg0.conf
-wg syncconf wg0 /usr/$POD_NAME/$CONTAINER_NAME/conf/wg0.conf
+    if [ -z "$key" ]; then
+        echo "Public key is required"
+        exit 1
+    fi
+
+    wg set wg0 peer $key remove
+    wg showconf wg0 > /usr/$POD_NAME/$CONTAINER_NAME/conf/wg0.conf
+    wg syncconf wg0 /usr/$POD_NAME/$CONTAINER_NAME/conf/wg0.conf
+}
+
+case $1 in
+    help)
+        echo "Usage: $0 [add|rm|show] [options]"
+        echo "  add : Add a peer to the WireGuard interface"
+        echo "  rm  : Remove a peer from the WireGuard interface"
+        echo "  show: Show current WireGuard configuration"
+        echo "  help: Show this help message"
+        exit 0
+        ;;
+    add)
+        shift
+        add_peer "$@"
+        ;;
+    rm)
+        shift
+        rm_peer "$@"
+        ;;
+    show)
+        ;;
+    *)
+        echo "Invalid option. Use 'help' for usage information."
+        exit 1
+        ;;
+esac
 
 ip link set down dev wg0
 ip link set up dev wg0
