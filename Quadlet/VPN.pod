@@ -3,6 +3,7 @@ ServiceName=pod-VPN
 PodName=VPN
 PublishPort=51820:51820/udp
 Volume=VPN_:/usr/VPN
+PodmanArgs=--sysctl=net.ipv4.ip_forward=1
 
 [Install]
-WantedBy=multi-user.target default.target
+WantedBy=default.target
