@@ -1,5 +1,5 @@
 [Pod]
-ServiceName=pod-VPN
+ServiceName=podman_pod_VPN
 PodName=VPN
 PublishPort=51820:51820/udp
 Volume=VPN_:/usr/VPN
