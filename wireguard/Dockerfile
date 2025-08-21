@@ -14,7 +14,7 @@ RUN ln -s /usr/share/zoneinfo/$TZ /etc/localtime
 RUN apk add tzdata wireguard-tools iptables
 
 RUN mkdir -p /usr
-COPY ["run.sh", "peer", "/usr/local/bin/"]
+COPY ["wireguard/run.sh", "wireguard/peer", "/usr/local/bin/"]
 RUN chmod +x /usr/local/bin/*
 
 ENTRYPOINT ["/usr/local/bin/run.sh"]
