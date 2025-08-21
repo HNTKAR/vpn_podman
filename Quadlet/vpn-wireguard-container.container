@@ -1,5 +1,5 @@
 [Container]
-ContainerName=vpn-wireguard
+ContainerName=Container-vpn-wireguard
 Image=localhost/vpn
 Pod=VPN.pod
 DropCapability=all

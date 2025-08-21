@@ -36,16 +36,17 @@ sudo podman run --cap-drop all --cap-add CAP_NET_ADMIN --pod VPN --name vpn-wire
 ### 有効化
 ```sh
 cd /Path/to/vpn_podman
-cp Quadlet/* /etc/containers/systemd/
+sudo cp Quadlet/* /etc/containers/systemd/
 sudo /usr/lib/systemd/system-generators/podman-system-generator
 sudo systemctl daemon-reload
+sudo systemctl start vpn-wireguard-image-build.service
 sudo systemctl start pod-VPN
 ```
 
 ### 無効化
 ```sh
 sudo systemctl stop pod-VPN
-sudo rm /usr/share/containers/systemd/{VPN.pod,vpn-wireguard.container}
+sudo rm /etc/containers/systemd/vpn-*
 sudo systemctl daemon-reload
 ```
 
