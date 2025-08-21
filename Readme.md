@@ -17,21 +17,6 @@
 
 # 実行スクリプト
 
-## 各種コンテナの手動起動
-###
-```bash
-cd Path/to/vpn_podman
-
-# Build Container
-sudo podman build --tag vpn --file wireguard/Dockerfile
-
-# Creeate Pod
-sudo podman pod create --replace --publish 51820:51820/udp --volume VPN_:/usr/VPN --name VPN
-
-# Start vpn-wireguard container
-sudo podman run --cap-drop all --cap-add CAP_NET_ADMIN --pod VPN --name vpn-wireguard --detach --replace vpn
-```
-
 ## systemdを使用した起動の設定(自動起動有効化済み)
 ### 有効化
 ```sh
@@ -39,13 +24,13 @@ cd /Path/to/vpn_podman
 sudo cp Quadlet/* /etc/containers/systemd/
 sudo /usr/lib/systemd/system-generators/podman-system-generator
 sudo systemctl daemon-reload
-sudo systemctl start vpn-wireguard-image-build.service
-sudo systemctl start pod-VPN
+sudo systemctl start podman_build_vpn.service
+sudo systemctl start podman_pod_VPN
 ```
 
 ### 無効化
 ```sh
-sudo systemctl stop pod-VPN
+sudo systemctl stop podman_pod_VPN
 sudo rm /etc/containers/systemd/vpn-*
 sudo systemctl daemon-reload
 ```
@@ -62,4 +47,19 @@ sudo podman exec -it vpn-wireguard peer rm -k <key>
 
 # 登録済み端末の取得
 sudo podman exec -it vpn-wireguard peer show
+```
+
+# 補足
+## systemdを使用しない起動方法
+```bash
+cd Path/to/vpn_podman
+
+# Build Container
+sudo podman build --tag vpn --file wireguard/Dockerfile
+
+# Creeate Pod
+sudo podman pod create --replace --publish 51820:51820/udp --sysctl=net.ipv4.ip_forward=1 --volume VPN_:/usr/VPN --name VPN
+
+# Start vpn-wireguard container
+sudo podman run --cap-drop all --cap-add CAP_NET_ADMIN --pod VPN --name vpn-wireguard --detach --replace vpn
 ```
