@@ -20,7 +20,7 @@
 ## 各種コンテナの手動起動
 ###
 ```bash
-cd vpn_podman
+cd Path/to/vpn_podman
 
 # Build Container
 sudo podman build --tag vpn --file wireguard/Dockerfile
@@ -35,15 +35,16 @@ sudo podman run --cap-drop all --cap-add CAP_NET_ADMIN --pod VPN --name vpn-wire
 ## systemdを使用した起動の設定(自動起動有効化済み)
 ### 有効化
 ```sh
-# コンテナはビルド済みであることが前提
-sudo cp Quadlet/* /usr/share/containers/systemd/
+cd /Path/to/vpn_podman
+cp Quadlet/* /etc/containers/systemd/
 sudo /usr/lib/systemd/system-generators/podman-system-generator
 sudo systemctl daemon-reload
+sudo systemctl start pod-VPN
 ```
 
 ### 無効化
 ```sh
-sudo systemctl disable --now pod-VPN
+sudo systemctl stop pod-VPN
 sudo rm /usr/share/containers/systemd/{VPN.pod,vpn-wireguard.container}
 sudo systemctl daemon-reload
 ```

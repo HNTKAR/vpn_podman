@@ -4,3 +4,4 @@ Image=localhost/vpn
 Pod=VPN.pod
 DropCapability=all
 AddCapability=CAP_NET_ADMIN
+AutoUpdate=local
