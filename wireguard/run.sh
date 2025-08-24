@@ -9,7 +9,7 @@ container_exit() {
 }
 
 trap "container_exit" SIGTERM
-mkdir -p /usr/$POD_NAME/$CONTAINER_NAME/{key,conf}
+mkdir -p /usr/$POD_NAME/$CONTAINER_NAME/{key,conf,logs}
 chown $(id -u):$(id -u) -R /usr/$POD_NAME/$CONTAINER_NAME
 chmod 700 /usr/$POD_NAME/$CONTAINER_NAME
 
