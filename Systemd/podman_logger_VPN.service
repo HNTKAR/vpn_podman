@@ -1,13 +1,13 @@
 [Unit]
 After=podman_pod_VPN.service
 BindsTo=podman_pod_VPN.service
-Requires=podman_pod_VPN.service
 
 [Install]
-WantedBy=podman_pod_VPN.service
+RequiredBy=podman_pod_VPN.service
 
 [Service]
 Type=simple
-ExecStart=/bin/sh -c 'journalctl -f | grep wireguard | tee $(podman volume mount VPN)/vpn-wireguard/logs/kernel.log'
+ExecStartPre=/bin/sh -c 'touch $(podman volume mount VPN)/vpn-wireguard/logs/kernel.log'
+ExecStart=/bin/sh -c 'journalctl -f -k | grep wireguard --line-buffered | tee $(podman volume mount VPN)/vpn-wireguard/logs/kernel.log'
 Restart=always
 RestartSec=5
