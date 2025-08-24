@@ -27,6 +27,7 @@ sudo cp Quadlet/* /etc/containers/systemd/
 sudo /usr/lib/systemd/system-generators/podman-system-generator
 sudo systemctl daemon-reload
 sudo systemctl start podman_build_vpn.service
+sudo systemctl enable --now podman_logger_VPN.service
 sudo systemctl start podman_pod_VPN
 ```
 
