@@ -21,6 +21,8 @@
 ### 有効化
 ```sh
 cd /Path/to/vpn_podman
+sudo mkdir -p /usr/local/lib/systemd/system
+sudo cp Systemd/* /usr/local/lib/systemd/system/
 sudo cp Quadlet/* /etc/containers/systemd/
 sudo /usr/lib/systemd/system-generators/podman-system-generator
 sudo systemctl daemon-reload
@@ -55,7 +57,7 @@ sudo podman exec -it vpn-wireguard peer show
 cd Path/to/vpn_podman
 
 # Build Container
-sudo podman build --tag vpn --file wireguard/Dockerfile
+sudo podman build --tag vpn --file wireguard/Dockerfile .
 
 # Creeate Pod
 sudo podman pod create --replace --publish 51820:51820/udp --sysctl=net.ipv4.ip_forward=1 --volume VPN_:/usr/VPN --name VPN
