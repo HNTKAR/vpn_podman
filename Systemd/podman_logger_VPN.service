@@ -1,10 +1,9 @@
 [Unit]
 After=podman_pod_VPN.service
 BindsTo=podman_pod_VPN.service
-Requires=podman_pod_VPN.service
 
 [Install]
-WantedBy=podman_pod_VPN.service
+RequiredBy=podman_pod_VPN.service
 
 [Service]
 Type=simple

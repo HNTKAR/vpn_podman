@@ -8,9 +8,6 @@ PodmanArgs=--sysctl=net.ipv4.ip_forward=1
 [Install]
 WantedBy=default.target
 
-[Unit]
-PartOf=podman_logger_VPN.service
-
 [Service]
 ExecStartPre=modprobe -r wireguard
 ExecStartPre=modprobe wireguard dyndbg=+p
