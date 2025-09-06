@@ -11,8 +11,9 @@ RUN apk upgrade
 
 RUN ln -s /usr/share/zoneinfo/$TZ /etc/localtime
 
-RUN apk add bash tzdata wireguard-tools iptables
+RUN apk add tzdata wireguard-tools iptables
 
+RUN mkdir -p /usr
 COPY ["wireguard/run.sh", "wireguard/peer", "/usr/local/bin/"]
 RUN chmod +x /usr/local/bin/*
 

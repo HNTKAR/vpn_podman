@@ -1,21 +1,13 @@
 [Pod]
-ServiceName= podman_pod_VPN
-PodName= VPN
-PublishPort= 51820:51820/udp
-Volume= vpn-volume.volume:/usr/VPN
-PodmanArgs= --sysctl=net.ipv4.ip_forward=1
-IP= ${IP}
-Network= vpn-network.network
+ServiceName=podman_pod_VPN
+PodName=VPN
+PublishPort=51820:51820/udp
+Volume=vpn-volume.volume:/usr/VPN
+PodmanArgs=--sysctl=net.ipv4.ip_forward=1
 
 [Install]
 WantedBy=default.target
 
 [Service]
-RuntimeDirectory= podman/vpn/pod
-EnvironmentFile= -/run/podman/vpn/pod/env
-ExecStartPre= touch /run/podman/vpn/pod/env
-ExecStartPre= /bin/sh -c 'echo "NIC=$(nmcli connection show --active |grep ethernet|head -n 1 | cut -d " "  -f 1)" >> /run/podman/vpn/pod/env'
-ExecStartPre= /bin/sh -c 'echo "BROADCAST=$(ip addr show dev $NIC |grep inet[^6]|sed -e "s/\ \+/ /g" -e s/^.*inet/inet/g|cut -d " " -f 4)" >> /run/podman/vpn/pod/env'
-ExecStartPre= /bin/sh -c 'echo "IP=$(echo $BROADCAST|cut -d . -f -3).$(($(echo $BROADCAST|cut -d . -f 4)-1))" >> /run/podman/vpn/pod/env'
-ExecStartPre= modprobe -r wireguard
-ExecStartPre= modprobe wireguard dyndbg=+p
+ExecStartPre=modprobe -r wireguard
+ExecStartPre=modprobe wireguard dyndbg=+p
