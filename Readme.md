@@ -12,7 +12,7 @@
 |名称|値|備考|
 |:-:|:-:|:-:|
 |localtime|Asia/Tokyo||
-|VPN network|10.0.0.1/24|VPN_NETを指定することで変更可能|
+|VPN network|172.20.0.1/24|VPN_NETを指定することで変更可能|
 |VPN port|51820|PORTを指定することで変更可能|
 
 # 実行スクリプト
