@@ -1,6 +1,6 @@
 [Pod]
-ServiceName=podman_pod_VPN
-PodName=VPN
+ServiceName=podman_pod_vpn
+PodName=vpn-pod
 PublishPort=51820:51820/udp
 Volume=vpn-volume.volume:/usr/VPN
 PodmanArgs=--sysctl=net.ipv4.ip_forward=1
