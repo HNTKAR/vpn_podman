@@ -1,10 +1,8 @@
 FROM alpine
 
-ENV VPN_NET="172.20.0.1/20"
 ENV TZ='Asia/Tokyo'
+ENV VPN_NET="172.20.0.1/20"
 ENV PORT="51820"
-ENV POD_NAME="vpn-pod"
-ENV CONTAINER_NAME="vpn-wireguard"
 
 RUN apk update
 RUN apk upgrade
