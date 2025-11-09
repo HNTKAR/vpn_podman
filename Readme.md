@@ -13,6 +13,7 @@
 |:-:|:-:|:-:|
 |localtime|Asia/Tokyo||
 |VPN network|172.20.0.1/24|VPN_NETを指定することで変更可能|
+|VPN network|172.20.0.1/24|VPN_NETを指定することで変更可能|
 |VPN port|51820|PORTを指定することで変更可能|
 
 # 実行スクリプト
@@ -21,6 +22,8 @@
 ### 有効化
 ```sh
 cd /Path/to/vpn_podman
+sudo mkdir -p /usr/local/lib/systemd/system
+sudo cp Systemd/* /usr/local/lib/systemd/system/
 sudo mkdir -p /usr/local/lib/systemd/system
 sudo cp Systemd/* /usr/local/lib/systemd/system/
 sudo cp Quadlet/* /etc/containers/systemd/
@@ -58,6 +61,7 @@ sudo podman exec -it vpn-wireguard peer show
 cd Path/to/vpn_podman
 
 # Build Container
+sudo podman build --tag vpn --file wireguard/Dockerfile .
 sudo podman build --tag vpn --file wireguard/Dockerfile .
 
 # Creeate Pod
