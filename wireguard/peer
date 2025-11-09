@@ -26,8 +26,8 @@ add_peer() {
     wg set wg0 \
         peer $key \
         allowed-ips $allow
-    wg showconf wg0 > /usr/V/$CONTAINER_NAME/conf/wg0.conf
-    wg syncconf wg0 /usr/V/$CONTAINER_NAME/conf/wg0.conf
+    wg showconf wg0 > /V/conf/wg0.conf
+    wg syncconf wg0 /V/conf/wg0.conf
 }
 
 rm_peer() {
@@ -49,8 +49,8 @@ rm_peer() {
     fi
 
     wg set wg0 peer $key remove
-    wg showconf wg0 > /usr/V/$CONTAINER_NAME/conf/wg0.conf
-    wg syncconf wg0 /usr/V/$CONTAINER_NAME/conf/wg0.conf
+    wg showconf wg0 > /V/conf/wg0.conf
+    wg syncconf wg0 /V/conf/wg0.conf
 }
 
 case $1 in

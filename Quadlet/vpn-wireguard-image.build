@@ -4,5 +4,4 @@ Environment=REPO=HNTKAR
 ImageTag=vpn
 ServiceName=podman_build_vpn
 SetWorkingDirectory=https://github.com/${REPO}/vpn_podman.git
-#SetWorkingDirectory=https://github.com/${REPO}/vpn_podman.git#dev
 File=wireguard/Dockerfile
