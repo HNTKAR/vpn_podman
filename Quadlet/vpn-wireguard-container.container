@@ -6,4 +6,3 @@ Pod=vpn-pod.pod
 DropCapability=all
 AddCapability=CAP_NET_ADMIN
 AutoUpdate=local
-Mount=type=volume,source=vpn-volume.volume,destination=/V
