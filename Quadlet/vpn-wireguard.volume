@@ -1,0 +1,3 @@
+[Volume]
+ServiceName=podman_volume_vpn_wireguard
+VolumeName=vpn-wireguard

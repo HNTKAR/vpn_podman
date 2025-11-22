@@ -1,3 +1,0 @@
-[Volume]
-ServiceName=podman_volume_vpn
-VolumeName=vpn-volume
